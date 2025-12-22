@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server';
 import prisma from '../../../../lib/prisma';
 
+// Отключаем попытки статического пререндеринга на сборке
+export const dynamic = 'force-dynamic';
+
 // GET - получение конкретного поста по ID
 export async function GET(req: Request, { params }: { params: { id: string } }) {
   try {

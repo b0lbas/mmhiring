@@ -1,5 +1,8 @@
 'use client';
 
+// Отключаем статический пререндеринг этой страницы при билде
+export const dynamic = 'force-dynamic';
+
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Header from '../../components/Header';
