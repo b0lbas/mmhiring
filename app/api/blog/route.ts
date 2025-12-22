@@ -1,6 +1,10 @@
 import { NextResponse } from 'next/server';
 import prisma from '../../../lib/prisma';
 
+// Отключаем статический пререндеринг/оптимизацию для этого API-роута,
+// чтобы на этапе билда Vercel не пытался выполнять запросы к базе
+export const dynamic = 'force-dynamic';
+
 // GET - получение всех постов
 export async function GET() {
   try {
