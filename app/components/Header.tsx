@@ -2,13 +2,22 @@
 
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { useRef } from 'react';
+import { usePathname } from 'next/navigation';
 
 export default function Header() {
-  const scrollToSection = (sectionId: string) => {
-    const element = document.getElementById(sectionId);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
+  const pathname = usePathname();
+  const isHomePage = pathname === '/';
+
+  const handleNavClick = (sectionId: string) => {
+    if (isHomePage) {
+      // Если на главной странице - скроллим к секции
+      const element = document.getElementById(sectionId);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
+    } else {
+      // Если на другой странице - переходим на главную с якорем
+      window.location.href = `/#${sectionId}`;
     }
   };
 
@@ -21,13 +30,15 @@ export default function Header() {
     >
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
-          <motion.div
-            whileHover={{ scale: 1.05 }}
-            className="text-2xl font-bold"
-          >
-            <span className="text-white">Match</span>
-            <span className="text-primary-pink">Makers</span>
-          </motion.div>
+          <Link href="/">
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              className="text-2xl font-bold cursor-pointer"
+            >
+              <span className="text-white">Match</span>
+              <span className="text-primary-pink">Makers</span>
+            </motion.div>
+          </Link>
 
           <nav className="hidden md:flex space-x-8">
             {['about', 'services', 'clients', 'contact'].map((item) => (
@@ -35,28 +46,29 @@ export default function Header() {
                 key={item}
                 whileHover={{ scale: 1.05, color: '#d24a98' }}
                 whileTap={{ scale: 0.95 }}
-                onClick={() => scrollToSection(item)}
-                className="text-white capitalize"
+                onClick={() => handleNavClick(item)}
+                className="text-white capitalize cursor-pointer"
               >
                 {item}
               </motion.button>
             ))}
-            <Link href="/blog" passHref legacyBehavior>
-              <motion.a
+            <Link href="/blog">
+              <motion.span
                 whileHover={{ scale: 1.05, color: '#d24a98' }}
                 whileTap={{ scale: 0.95 }}
                 className="text-white cursor-pointer"
                 style={{ display: 'inline-block' }}
               >
                 Blog
-              </motion.a>
+              </motion.span>
             </Link>
           </nav>
 
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="bg-gradient-pink text-white px-6 py-2 rounded-full font-semibold"
+            onClick={() => handleNavClick('contact')}
+            className="bg-gradient-pink text-white px-6 py-2 rounded-full font-semibold cursor-pointer"
           >
             Get Started
           </motion.button>
