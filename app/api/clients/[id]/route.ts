@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
 
+// Отключаем статический пререндеринг для этого API-роута
+export const dynamic = 'force-dynamic';
+
 const prisma = new PrismaClient();
 
 // PUT - обновить клиента

@@ -3,6 +3,9 @@ import { PrismaClient } from '@prisma/client';
 import { promises as fs } from 'fs';
 import path from 'path';
 
+// Отключаем статический пререндеринг для этого API-роута
+export const dynamic = 'force-dynamic';
+
 const prisma = new PrismaClient();
 
 // GET - получить всех клиентов
