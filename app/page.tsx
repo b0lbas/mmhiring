@@ -5,7 +5,6 @@ import { useState, useEffect } from 'react';
 import Header from './components/Header';
 import TeamStructure from './components/TeamStructure';
 import Link from 'next/link';
-import Head from 'next/head';
 
 type Client = {
   id: number;
@@ -95,12 +94,6 @@ export default function Home() {
 
   return (
     <>
-      <Head>
-        <title>MatchMakers Hiring</title>
-        <meta name="description" content="Connecting top tech talent with innovative companies." />
-        <link rel="icon" href="public/uploads/micrologo.png" />
-      </Head>
-
       <Header />
       <main className="min-h-screen bg-gradient-to-b from-primary-dark to-primary-blue pt-20">
         <div className="container mx-auto px-4 py-16">

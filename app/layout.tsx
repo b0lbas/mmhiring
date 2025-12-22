@@ -1,12 +1,16 @@
-'use client';
-
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
-import { useRef, useEffect, useState } from 'react';
-import { usePathname, useRouter } from 'next/navigation';
 
 const inter = Inter({ subsets: ['latin'] })
+
+export const metadata: Metadata = {
+  title: 'MatchMakers Hiring',
+  description: 'Connecting top tech talent with innovative companies.',
+  icons: {
+    icon: '/uploads/micrologo.png',
+  },
+}
 
 export default function RootLayout({
   children,
@@ -15,6 +19,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ru">
+      <head>
+        <link rel="icon" href="/uploads/micrologo.png" />
+      </head>
       <body className={inter.className}>{children}</body>
     </html>
   );
