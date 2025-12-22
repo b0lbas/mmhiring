@@ -12,7 +12,7 @@
     "db:seed": "ts-node scripts/seed.ts"
   },
   "dependencies": {
-    "@prisma/client": "^6.8.2",
+    "@prisma/client": "^6.19.1",
     "autoprefixer": "^10.4.17",
     "formidable": "^3.5.4",
     "framer-motion": "^11.0.3",
@@ -30,7 +30,7 @@
     "@types/node": "22.14.0",
     "@types/react": "19.1.0",
     "@types/uuid": "^10.0.0",
-    "prisma": "^6.11.1",
+    "prisma": "^6.19.1",
     "typescript": "5.8.3"
   }
 }
