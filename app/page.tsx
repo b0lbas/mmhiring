@@ -98,7 +98,7 @@ export default function Home() {
       <Head>
         <title>MatchMakers Hiring</title>
         <meta name="description" content="Connecting top tech talent with innovative companies." />
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href="/uploads/micrologo.png" />
       </Head>
 
       <Header />
