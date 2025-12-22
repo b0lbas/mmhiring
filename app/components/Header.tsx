@@ -33,10 +33,13 @@ export default function Header() {
           <Link href="/">
             <motion.div
               whileHover={{ scale: 1.05 }}
-              className="text-2xl font-bold cursor-pointer"
+              className="cursor-pointer flex items-center"
             >
-              <span className="text-white">Match</span>
-              <span className="text-primary-pink">Makers</span>
+              <img
+                src="/uploads/MM_logo_Color_transp.svg"
+                alt="MatchMakers"
+                className="h-8 w-auto md:h-9"
+              />
             </motion.div>
           </Link>
 
