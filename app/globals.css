@@ -1,0 +1,69 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.cdnfonts.com/css/clash-display');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 255, 255, 255;
+  --background-start-rgb: 10, 15, 31;
+  --background-end-rgb: 26, 31, 46;
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: linear-gradient(
+    180deg,
+    rgb(var(--background-start-rgb)) 0%,
+    rgb(var(--background-end-rgb)) 100%
+  );
+  min-height: 100vh;
+  font-family: 'Inter', sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Clash Display', sans-serif;
+}
+
+.glass-effect {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, #d24a98 0%, #FF6B6B 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.path-line {
+  position: relative;
+  height: 2px;
+  background: linear-gradient(90deg, #d24a98 0%, #FF6B6B 50%, #d24a98 100%);
+  background-size: 200% 100%;
+  animation: path-glow 2s ease-in-out infinite;
+}
+
+.path-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #d24a98;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+@keyframes path-glow {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 100px;
+} 
