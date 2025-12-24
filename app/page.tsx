@@ -106,7 +106,7 @@ export default function Home() {
             <div className="absolute inset-0 bg-gradient-dark opacity-50"></div>
             <div className="relative z-10 -mt-20">
               <motion.h1 
-                className="text-7xl md:text-8xl font-bold mb-6 text-white font-display"
+                className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl xl:text-8xl font-bold mb-6 text-white font-display px-4 break-words"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2, duration: 0.8 }}
@@ -284,7 +284,7 @@ export default function Home() {
                 aria-label="Send Request"
                 disabled={isSubmitting}
               >
-                {isSubmitting ? 'Отправка...' : 'Send Request'}
+                {isSubmitting ? 'Sending...' : 'Send Request'}
               </motion.button>
               {submitted && (
                 <div className="text-green-400 text-center mt-4" role="status">

@@ -34,13 +34,13 @@ export default function BlogPostPage({ params }: { params: { id: string } }) {
             router.replace('/blog');
             return;
           }
-          throw new Error('Ошибка при получении поста');
+          throw new Error('Error loading post');
         }
         
         const data = await response.json();
         setPost(data);
       } catch (error) {
-        setError('Не удалось загрузить пост');
+        setError('Failed to load post');
         console.error(error);
       } finally {
         setLoading(false);
@@ -56,7 +56,7 @@ export default function BlogPostPage({ params }: { params: { id: string } }) {
         <Header />
         <main className="min-h-screen bg-gradient-to-b from-primary-dark to-primary-blue pt-20">
           <div className="container mx-auto px-4 py-16 max-w-2xl">
-            <div className="text-center text-white text-xl">Загрузка...</div>
+            <div className="text-center text-white text-xl">Loading...</div>
           </div>
         </main>
       </>
@@ -69,10 +69,10 @@ export default function BlogPostPage({ params }: { params: { id: string } }) {
         <Header />
         <main className="min-h-screen bg-gradient-to-b from-primary-dark to-primary-blue pt-20">
           <div className="container mx-auto px-4 py-16 max-w-2xl">
-            <div className="text-center text-red-400 text-xl">{error || 'Пост не найден'}</div>
+            <div className="text-center text-red-400 text-xl">{error || 'Post not found'}</div>
             <div className="text-center mt-4">
               <Link href="/blog" className="text-primary-pink hover:underline">
-                Вернуться к блогу
+                Back to Blog
               </Link>
             </div>
           </div>
@@ -97,7 +97,7 @@ export default function BlogPostPage({ params }: { params: { id: string } }) {
           
           <div className="mt-12 text-center">
             <Link href="/blog" className="text-primary-pink hover:underline">
-              ← Вернуться к блогу
+              ← Back to Blog
             </Link>
           </div>
         </div>

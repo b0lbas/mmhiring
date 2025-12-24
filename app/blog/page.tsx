@@ -46,13 +46,13 @@ export default function Blog() {
         const response = await fetch('/api/blog');
         
         if (!response.ok) {
-          throw new Error('Ошибка при получении постов');
+          throw new Error('Error loading posts');
         }
         
         const data = await response.json();
         setPosts(data);
       } catch (error) {
-        setError('Не удалось загрузить посты');
+        setError('Failed to load posts');
         console.error(error);
       } finally {
         setLoading(false);
@@ -77,11 +77,11 @@ export default function Blog() {
           </motion.h1>
           
           {loading ? (
-            <div className="text-center text-white text-xl">Загрузка постов...</div>
+            <div className="text-center text-white text-xl">Loading posts...</div>
           ) : error ? (
             <div className="text-center text-red-400 text-xl">{error}</div>
           ) : posts.length === 0 ? (
-            <div className="text-center text-white text-xl">Нет доступных постов</div>
+            <div className="text-center text-white text-xl">No posts available</div>
           ) : (
             <motion.div
               className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 justify-items-center"
