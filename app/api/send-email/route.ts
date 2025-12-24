@@ -6,8 +6,8 @@ const transporter = nodemailer.createTransport({
   port: parseInt(process.env.SMTP_PORT || '587'),
   secure: false,
   auth: {
-    user: process.env.SMTP_USER || 'ishaq1abu2halawa2017@gmail.com',
-    pass: process.env.SMTP_PASSWORD || 'lqfzpvqbmrnxaxkq'
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASSWORD
   }
 });
 
@@ -17,27 +17,36 @@ export async function POST(req: Request) {
 
     if (!companyName || !email || !request) {
       return NextResponse.json(
-        { error: 'Заполните все обязательные поля' },
+        { error: 'Please fill in all required fields' },
         { status: 400 }
       );
     }
 
+    // Проверяем наличие SMTP настроек
+    if (!process.env.SMTP_USER || !process.env.SMTP_PASSWORD) {
+      console.error('SMTP credentials not configured');
+      return NextResponse.json(
+        { error: 'Email service is not configured. Please contact the administrator.' },
+        { status: 500 }
+      );
+    }
+
     const mailOptions = {
-      from: process.env.SMTP_FROM || 'ishaq1abu2halawa2017@gmail.com',
-      to: 'ishaq1abu2halawa2017@gmail.com',
+      from: process.env.SMTP_FROM || process.env.SMTP_USER,
+      to: process.env.CONTACT_EMAIL || process.env.SMTP_USER,
       replyTo: email,
-      subject: `Запрос от компании ${companyName}`,
+      subject: `Request from company ${companyName}`,
       text: `
-        Компания: ${companyName}
-        Электронная почта: ${email}
+        Company: ${companyName}
+        Email: ${email}
         
-        Запрос:
+        Request:
         ${request}
       `,
       html: `
-        <p><strong>Компания:</strong> ${companyName}</p>
-        <p><strong>Электронная почта:</strong> ${email}</p>
-        <p><strong>Запрос:</strong></p>
+        <p><strong>Company:</strong> ${companyName}</p>
+        <p><strong>Email:</strong> ${email}</p>
+        <p><strong>Request:</strong></p>
         <p>${request.replace(/\n/g, '<br>')}</p>
       `
     };
@@ -47,9 +56,9 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('Ошибка отправки email:', error);
+    console.error('Email sending error:', error);
     return NextResponse.json(
-      { error: 'Произошла ошибка при отправке сообщения' },
+      { error: error instanceof Error ? error.message : 'An error occurred while sending the message' },
       { status: 500 }
     );
   }

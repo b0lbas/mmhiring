@@ -78,14 +78,14 @@ export default function Home() {
         const data = await response.json();
         
         if (!response.ok) {
-          throw new Error(data.error || 'Произошла ошибка при отправке сообщения');
+          throw new Error(data.error || 'An error occurred while sending the message');
         }
         
         setSubmitted(true);
         setFormData({ companyName: '', email: '', request: '' });
         setTimeout(() => setSubmitted(false), 3000);
       } catch (error) {
-        setSubmitError(error instanceof Error ? error.message : 'Произошла неизвестная ошибка');
+        setSubmitError(error instanceof Error ? error.message : 'An unknown error occurred');
       } finally {
         setIsSubmitting(false);
       }
