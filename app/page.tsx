@@ -175,11 +175,11 @@ export default function Home() {
             className="mb-32 w-full max-w-3xl mx-auto"
           >
             <h2 className="text-4xl font-bold text-white mb-6 text-center font-display">What we can offer</h2>
-            <ul className="list-disc list-inside text-lg text-gray-300 space-y-3">
-              <li>Source top talent for your company, startup, or new projects.</li>
-              <li>Build teams where employees complement each other and work towards your company&apos;s goals.</li>
-              <li>Guide you through every step of the recruitment process with care, making it seamless and effective.</li>
-            </ul>
+            <div className="text-lg text-gray-300 space-y-4 leading-relaxed">
+              <p>Executive search and sourcing of top talent for your company, startup, or new projects.</p>
+              <p>Building high-impact teams where employees truly complement each other and work towards your company&apos;s goals.</p>
+              <p>Guiding you through every step of the recruitment process with care, making it seamless, transparent, and effective.</p>
+            </div>
           </motion.section>
 
           <motion.section
