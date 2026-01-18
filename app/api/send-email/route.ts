@@ -1,15 +1,42 @@
 import { NextResponse } from 'next/server';
 import nodemailer from 'nodemailer';
 
-const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST || 'smtp.gmail.com',
-  port: parseInt(process.env.SMTP_PORT || '587'),
-  secure: false,
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASSWORD
+function parseBoolean(value: string | undefined): boolean | undefined {
+  if (value == null) return undefined;
+  const normalized = value.trim().toLowerCase();
+  if (['1', 'true', 'yes', 'y', 'on'].includes(normalized)) return true;
+  if (['0', 'false', 'no', 'n', 'off'].includes(normalized)) return false;
+  return undefined;
+}
+
+function createTransporter() {
+  const host = process.env.SMTP_HOST || 'smtp.gmail.com';
+  const port = Number.parseInt(process.env.SMTP_PORT || '587', 10);
+  const secureFromEnv = parseBoolean(process.env.SMTP_SECURE);
+  const secure = secureFromEnv ?? port === 465;
+
+  return nodemailer.createTransport({
+    host,
+    port,
+    secure,
+    auth: {
+      user: process.env.SMTP_USER,
+      pass: process.env.SMTP_PASSWORD
+    }
+  });
+}
+
+function formatSmtpError(error: unknown) {
+  const message = error instanceof Error ? error.message : String(error);
+  // Gmail commonly rejects basic username/password logins; App Password is required.
+  if (/^Invalid login: 535\b/.test(message) || /535-5\.7\.8/.test(message)) {
+    if ((process.env.SMTP_HOST || '').includes('gmail') || (process.env.SMTP_HOST || '') === 'smtp.gmail.com') {
+      return 'Gmail rejected the login (535). Use a Google App Password (not your normal password) or configure a different SMTP provider.';
+    }
+    return 'SMTP rejected the login (535). Check SMTP username/password and provider requirements.';
   }
-});
+  return message;
+}
 
 export async function POST(req: Request) {
   try {
@@ -30,6 +57,8 @@ export async function POST(req: Request) {
         { status: 500 }
       );
     }
+
+    const transporter = createTransporter();
 
     const mailOptions = {
       from: process.env.SMTP_FROM || process.env.SMTP_USER,
@@ -58,7 +87,7 @@ export async function POST(req: Request) {
   } catch (error) {
     console.error('Email sending error:', error);
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'An error occurred while sending the message' },
+      { error: formatSmtpError(error) || 'An error occurred while sending the message' },
       { status: 500 }
     );
   }
