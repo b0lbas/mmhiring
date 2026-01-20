@@ -172,13 +172,40 @@ export default function Home() {
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             transition={{ duration: 0.8 }}
-            className="mb-32 w-full max-w-3xl mx-auto"
+            className="mb-32 w-full max-w-6xl mx-auto"
           >
-            <h2 className="text-4xl font-bold text-white mb-6 text-center font-display">What we can offer</h2>
-            <div className="text-lg text-gray-300 space-y-4 leading-relaxed">
-              <p>Executive search and sourcing of top talent for your company, startup, or new projects.</p>
-              <p>Building high-impact teams where employees truly complement each other and work towards your company&apos;s goals.</p>
-              <p>Guiding you through every step of the recruitment process with care, making it seamless, transparent, and effective.</p>
+            <h2 className="text-4xl font-bold text-white mb-12 text-center font-display">What we can offer</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {[
+                {
+                  title: "Executive search",
+                  description:
+                    "Executive search and sourcing of top talent for your company, startup, or new projects.",
+                  icon: "🎯"
+                },
+                {
+                  title: "Team building",
+                  description:
+                    "Building high-impact teams where employees truly complement each other and work towards your company's goals.",
+                  icon: "🤝"
+                },
+                {
+                  title: "End-to-end guidance",
+                  description:
+                    "Guiding you through every step of the recruitment process with care, making it seamless, transparent, and effective.",
+                  icon: "🧭"
+                }
+              ].map((offer, index) => (
+                <motion.div
+                  key={index}
+                  className="bg-white/5 backdrop-blur-glass p-8 rounded-xl border border-white/10 shadow-glass text-center"
+                  whileHover={{ y: -5, boxShadow: "0 10px 20px rgba(0,0,0,0.2)" }}
+                >
+                  <div className="text-4xl mb-4">{offer.icon}</div>
+                  <h3 className="text-xl font-semibold text-white mb-2">{offer.title}</h3>
+                  <p className="text-gray-300">{offer.description}</p>
+                </motion.div>
+              ))}
             </div>
           </motion.section>
 
