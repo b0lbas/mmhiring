@@ -33,13 +33,44 @@ function createTransporter() {
 }
 
 function formatSmtpError(error: unknown) {
+  const err = error as any;
   const message = error instanceof Error ? error.message : String(error);
+  const responseCode = typeof err?.responseCode === 'number' ? err.responseCode : undefined;
+  const command = typeof err?.command === 'string' ? err.command : undefined;
+
+  const host = process.env.SMTP_HOST || 'smtp.gmail.com';
+  const port = Number.parseInt(process.env.SMTP_PORT || '587', 10);
+  const secureFromEnv = parseBoolean(process.env.SMTP_SECURE);
+  const secure = secureFromEnv ?? port === 465;
+  const user = process.env.SMTP_USER?.trim();
+  const passRaw = process.env.SMTP_PASSWORD ?? '';
+  const passNormalized = passRaw.replace(/\s+/g, '');
+  const passHadWhitespace = passRaw.length !== passNormalized.length;
   // Gmail commonly rejects basic username/password logins; App Password is required.
   if (/^Invalid login: 535\b/.test(message) || /535-5\.7\.8/.test(message)) {
-    if ((process.env.SMTP_HOST || '').includes('gmail') || (process.env.SMTP_HOST || '') === 'smtp.gmail.com') {
-      return 'Gmail rejected the login (535). Use a Google App Password (not your normal password) or configure a different SMTP provider.';
+    const isGmail = host.includes('gmail') || host === 'smtp.gmail.com';
+
+    const details = [
+      responseCode ? `code=${responseCode}` : undefined,
+      command ? `command=${command}` : undefined,
+      `host=${host}`,
+      `port=${port}`,
+      `secure=${secure}`,
+      user ? `user=${user}` : 'user=(missing)',
+      `passLen=${passNormalized.length}`,
+      passHadWhitespace ? 'passHadWhitespace=true' : undefined
+    ]
+      .filter(Boolean)
+      .join(' ');
+
+    if (isGmail) {
+      const lengthHint =
+        passNormalized.length && passNormalized.length !== 16
+          ? ' (Gmail App Password is usually 16 chars)'
+          : '';
+      return `Gmail rejected the login (535). Ensure 2FA is enabled and SMTP_PASSWORD is a Google App Password (not your normal password) pasted without spaces${lengthHint}. If this is a Google Workspace account, the admin may block App Passwords/SMTP. ${details}`;
     }
-    return 'SMTP rejected the login (535). Check SMTP username/password and provider requirements.';
+    return `SMTP rejected the login (535). Check SMTP username/password and provider requirements. ${details}`;
   }
   return message;
 }

@@ -9,6 +9,9 @@ npm run db:seed
 
 The contact form sends email via SMTP using environment variables.
 
+- For local development (`npm run dev`): copy `.env.example` to `.env.local` and fill SMTP vars.
+- For Docker Compose (`docker compose up`): create a `.env` file next to `docker-compose.yml` (or export env vars in your shell) so `${SMTP_*}` values are not blank.
+
 - Configure `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASSWORD`, optional `SMTP_FROM`, `CONTACT_EMAIL`.
 - If you use Gmail (`smtp.gmail.com`): Google does not accept normal passwords for SMTP in most cases.
 	Create a Google **App Password** (requires 2FA) and put it into `SMTP_PASSWORD` (paste it **without spaces**).
