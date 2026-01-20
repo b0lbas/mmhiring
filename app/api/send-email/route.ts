@@ -19,12 +19,18 @@ function createTransporter() {
   // Gmail App Passwords are often copied with spaces; strip all whitespace.
   const pass = process.env.SMTP_PASSWORD?.replace(/\s+/g, '');
 
+  const authMethodFromEnv = process.env.SMTP_AUTH_METHOD?.trim();
+  const isGmail = host.includes('gmail') || host === 'smtp.gmail.com';
+  // Gmail sometimes rejects AUTH PLAIN from certain environments; LOGIN can work better.
+  const authMethod = authMethodFromEnv || (isGmail ? 'LOGIN' : undefined);
+
   return nodemailer.createTransport({
     host,
     port,
     secure,
     // For port 587 we rely on STARTTLS; requireTLS prevents silent downgrade.
     requireTLS: !secure && port === 587,
+    ...(authMethod ? { authMethod } : {}),
     auth: {
       user,
       pass
