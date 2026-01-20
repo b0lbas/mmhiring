@@ -11,5 +11,5 @@ The contact form sends email via SMTP using environment variables.
 
 - Configure `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASSWORD`, optional `SMTP_FROM`, `CONTACT_EMAIL`.
 - If you use Gmail (`smtp.gmail.com`): Google does not accept normal passwords for SMTP in most cases.
-	Create a Google **App Password** (requires 2FA) and put it into `SMTP_PASSWORD`.
+	Create a Google **App Password** (requires 2FA) and put it into `SMTP_PASSWORD` (paste it **without spaces**).
 - For port `465` set `SMTP_SECURE=true`. For port `587` keep `SMTP_SECURE=false`.

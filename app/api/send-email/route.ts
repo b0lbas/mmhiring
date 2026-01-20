@@ -15,13 +15,19 @@ function createTransporter() {
   const secureFromEnv = parseBoolean(process.env.SMTP_SECURE);
   const secure = secureFromEnv ?? port === 465;
 
+  const user = process.env.SMTP_USER?.trim();
+  // Gmail App Passwords are often copied with spaces; strip all whitespace.
+  const pass = process.env.SMTP_PASSWORD?.replace(/\s+/g, '');
+
   return nodemailer.createTransport({
     host,
     port,
     secure,
+    // For port 587 we rely on STARTTLS; requireTLS prevents silent downgrade.
+    requireTLS: !secure && port === 587,
     auth: {
-      user: process.env.SMTP_USER,
-      pass: process.env.SMTP_PASSWORD
+      user,
+      pass
     }
   });
 }
