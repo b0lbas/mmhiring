@@ -1,9 +1,32 @@
 docker compose up
 
 npx prisma generate
-npx prisma db push
+npx prisma migrate deploy
 
 npm run db:seed
+
+## Vercel deploy
+
+- Make sure Vercel project has env vars:
+	- `DATABASE_URL`
+	- `ADMIN_PASSWORD`
+	- `JWT_SECRET`
+	- (optional) `SMTP_*` + `CONTACT_EMAIL` for the contact form
+- If you want migrations applied automatically on deploy, set **Build Command** to `npm run vercel-build`.
+	- Recommendation: use a separate DB for Preview deployments, or keep migrations out of Preview builds.
+
+## Windows / PowerShell note
+
+If you see an error like “`npm.ps1` cannot be loaded because it is not digitally signed”, it's a PowerShell execution policy restriction.
+
+Options:
+
+- Run commands via `cmd.exe` (or Git Bash), where `npm`/`npx` work normally.
+- From PowerShell, use the `.cmd` shims:
+	- `"C:\Program Files\nodejs\npm.cmd" run build`
+	- `"C:\Program Files\nodejs\npx.cmd" prisma generate`
+- Or (recommended) relax policy for current user:
+	- `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned`
 
 ## Email (contact form)
 
