@@ -3,6 +3,13 @@ import { cookies } from 'next/headers';
 import prisma from '../../../../lib/prisma';
 import { defaultHomePageContent, isHomePageContent } from '../../../../lib/site-content';
 import { isValidJWT } from '../../../../lib/jwt-auth';
+import {
+  PrismaClientInitializationError,
+  PrismaClientKnownRequestError
+} from '@prisma/client/runtime/library';
+
+// Prisma requires Node.js runtime (not Edge)
+export const runtime = 'nodejs';
 
 const HOME_KEY = 'home';
 
@@ -53,6 +60,30 @@ export async function PUT(req: Request) {
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Failed to save home page content:', error);
+
+    // Common production issues on Vercel: missing migrations/table, invalid DATABASE_URL.
+    if (error instanceof PrismaClientKnownRequestError) {
+      if (error.code === 'P2021') {
+        return NextResponse.json(
+          {
+            error:
+              'Database is not migrated (SiteContent table missing). Run `prisma migrate deploy` against your production database.'
+          },
+          { status: 500 }
+        );
+      }
+    }
+
+    if (error instanceof PrismaClientInitializationError) {
+      return NextResponse.json(
+        {
+          error:
+            'Database connection failed. Check that `DATABASE_URL` is set correctly in Vercel Environment Variables.'
+        },
+        { status: 500 }
+      );
+    }
+
     return NextResponse.json(
       { error: 'Failed to save content' },
       { status: 500 }
