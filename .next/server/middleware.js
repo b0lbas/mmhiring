@@ -17,7 +17,7 @@ module.exports = require("node:buffer");
 
 /***/ }),
 
-/***/ 792:
+/***/ 230:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -2610,7 +2610,7 @@ async function middleware(request) {
     const pathname = request.nextUrl.pathname;
     // Проверяем только защищенные роуты
     const isAdminRoute = pathname.startsWith("/admin") && !pathname.startsWith("/admin/login");
-    const isProtectedAPIRoute = pathname.startsWith("/api/blog") && request.method !== "GET" || pathname.startsWith("/api/upload");
+    const isProtectedAPIRoute = pathname.startsWith("/api/blog") && request.method !== "GET" || pathname.startsWith("/api/upload") || pathname.startsWith("/api/site-content") && request.method !== "GET";
     if (isAdminRoute || isProtectedAPIRoute) {
         const adminSession = request.cookies.get("admin_session")?.value;
         console.log(`Checking access to: ${pathname}`);
@@ -2638,11 +2638,12 @@ const config = {
     matcher: [
         "/admin/:path*",
         "/api/blog/:path*",
-        "/api/upload/:path*"
+        "/api/upload/:path*",
+        "/api/site-content/:path*"
     ]
 };
 
-;// CONCATENATED MODULE: ./node_modules/next/dist/build/webpack/loaders/next-middleware-loader.js?absolutePagePath=private-next-root-dir%2Fmiddleware.ts&page=%2Fmiddleware&rootDir=C%3A%5CUsers%5Cbolba%5COneDrive%5CDesktop%5Cmm-finale%5Cmmhiring&matchers=W3sicmVnZXhwIjoiXig%2FOlxcLyhfbmV4dFxcL2RhdGFcXC9bXi9dezEsfSkpP1xcL2FkbWluKD86XFwvKCg%2FOlteXFwvI1xcP10rPykoPzpcXC8oPzpbXlxcLyNcXD9dKz8pKSopKT8oLmpzb24pP1tcXC8jXFw%2FXT8kIiwib3JpZ2luYWxTb3VyY2UiOiIvYWRtaW4vOnBhdGgqIn0seyJyZWdleHAiOiJeKD86XFwvKF9uZXh0XFwvZGF0YVxcL1teL117MSx9KSk%2FXFwvYXBpXFwvYmxvZyg%2FOlxcLygoPzpbXlxcLyNcXD9dKz8pKD86XFwvKD86W15cXC8jXFw%2FXSs%2FKSkqKSk%2FKC5qc29uKT9bXFwvI1xcP10%2FJCIsIm9yaWdpbmFsU291cmNlIjoiL2FwaS9ibG9nLzpwYXRoKiJ9LHsicmVnZXhwIjoiXig%2FOlxcLyhfbmV4dFxcL2RhdGFcXC9bXi9dezEsfSkpP1xcL2FwaVxcL3VwbG9hZCg%2FOlxcLygoPzpbXlxcLyNcXD9dKz8pKD86XFwvKD86W15cXC8jXFw%2FXSs%2FKSkqKSk%2FKC5qc29uKT9bXFwvI1xcP10%2FJCIsIm9yaWdpbmFsU291cmNlIjoiL2FwaS91cGxvYWQvOnBhdGgqIn1d&preferredRegion=&middlewareConfig=eyJtYXRjaGVycyI6W3sicmVnZXhwIjoiXig%2FOlxcLyhfbmV4dFxcL2RhdGFcXC9bXi9dezEsfSkpP1xcL2FkbWluKD86XFwvKCg%2FOlteXFwvI1xcP10rPykoPzpcXC8oPzpbXlxcLyNcXD9dKz8pKSopKT8oLmpzb24pP1tcXC8jXFw%2FXT8kIiwib3JpZ2luYWxTb3VyY2UiOiIvYWRtaW4vOnBhdGgqIn0seyJyZWdleHAiOiJeKD86XFwvKF9uZXh0XFwvZGF0YVxcL1teL117MSx9KSk%2FXFwvYXBpXFwvYmxvZyg%2FOlxcLygoPzpbXlxcLyNcXD9dKz8pKD86XFwvKD86W15cXC8jXFw%2FXSs%2FKSkqKSk%2FKC5qc29uKT9bXFwvI1xcP10%2FJCIsIm9yaWdpbmFsU291cmNlIjoiL2FwaS9ibG9nLzpwYXRoKiJ9LHsicmVnZXhwIjoiXig%2FOlxcLyhfbmV4dFxcL2RhdGFcXC9bXi9dezEsfSkpP1xcL2FwaVxcL3VwbG9hZCg%2FOlxcLygoPzpbXlxcLyNcXD9dKz8pKD86XFwvKD86W15cXC8jXFw%2FXSs%2FKSkqKSk%2FKC5qc29uKT9bXFwvI1xcP10%2FJCIsIm9yaWdpbmFsU291cmNlIjoiL2FwaS91cGxvYWQvOnBhdGgqIn1dfQ%3D%3D!
+;// CONCATENATED MODULE: ./node_modules/next/dist/build/webpack/loaders/next-middleware-loader.js?absolutePagePath=private-next-root-dir%2Fmiddleware.ts&page=%2Fmiddleware&rootDir=C%3A%5CUsers%5Cbolba%5COneDrive%5CDesktop%5Cmm-finale%5Cmmhiring&matchers=W3sicmVnZXhwIjoiXig%2FOlxcLyhfbmV4dFxcL2RhdGFcXC9bXi9dezEsfSkpP1xcL2FkbWluKD86XFwvKCg%2FOlteXFwvI1xcP10rPykoPzpcXC8oPzpbXlxcLyNcXD9dKz8pKSopKT8oLmpzb24pP1tcXC8jXFw%2FXT8kIiwib3JpZ2luYWxTb3VyY2UiOiIvYWRtaW4vOnBhdGgqIn0seyJyZWdleHAiOiJeKD86XFwvKF9uZXh0XFwvZGF0YVxcL1teL117MSx9KSk%2FXFwvYXBpXFwvYmxvZyg%2FOlxcLygoPzpbXlxcLyNcXD9dKz8pKD86XFwvKD86W15cXC8jXFw%2FXSs%2FKSkqKSk%2FKC5qc29uKT9bXFwvI1xcP10%2FJCIsIm9yaWdpbmFsU291cmNlIjoiL2FwaS9ibG9nLzpwYXRoKiJ9LHsicmVnZXhwIjoiXig%2FOlxcLyhfbmV4dFxcL2RhdGFcXC9bXi9dezEsfSkpP1xcL2FwaVxcL3VwbG9hZCg%2FOlxcLygoPzpbXlxcLyNcXD9dKz8pKD86XFwvKD86W15cXC8jXFw%2FXSs%2FKSkqKSk%2FKC5qc29uKT9bXFwvI1xcP10%2FJCIsIm9yaWdpbmFsU291cmNlIjoiL2FwaS91cGxvYWQvOnBhdGgqIn0seyJyZWdleHAiOiJeKD86XFwvKF9uZXh0XFwvZGF0YVxcL1teL117MSx9KSk%2FXFwvYXBpXFwvc2l0ZS1jb250ZW50KD86XFwvKCg%2FOlteXFwvI1xcP10rPykoPzpcXC8oPzpbXlxcLyNcXD9dKz8pKSopKT8oLmpzb24pP1tcXC8jXFw%2FXT8kIiwib3JpZ2luYWxTb3VyY2UiOiIvYXBpL3NpdGUtY29udGVudC86cGF0aCoifV0%3D&preferredRegion=&middlewareConfig=eyJtYXRjaGVycyI6W3sicmVnZXhwIjoiXig%2FOlxcLyhfbmV4dFxcL2RhdGFcXC9bXi9dezEsfSkpP1xcL2FkbWluKD86XFwvKCg%2FOlteXFwvI1xcP10rPykoPzpcXC8oPzpbXlxcLyNcXD9dKz8pKSopKT8oLmpzb24pP1tcXC8jXFw%2FXT8kIiwib3JpZ2luYWxTb3VyY2UiOiIvYWRtaW4vOnBhdGgqIn0seyJyZWdleHAiOiJeKD86XFwvKF9uZXh0XFwvZGF0YVxcL1teL117MSx9KSk%2FXFwvYXBpXFwvYmxvZyg%2FOlxcLygoPzpbXlxcLyNcXD9dKz8pKD86XFwvKD86W15cXC8jXFw%2FXSs%2FKSkqKSk%2FKC5qc29uKT9bXFwvI1xcP10%2FJCIsIm9yaWdpbmFsU291cmNlIjoiL2FwaS9ibG9nLzpwYXRoKiJ9LHsicmVnZXhwIjoiXig%2FOlxcLyhfbmV4dFxcL2RhdGFcXC9bXi9dezEsfSkpP1xcL2FwaVxcL3VwbG9hZCg%2FOlxcLygoPzpbXlxcLyNcXD9dKz8pKD86XFwvKD86W15cXC8jXFw%2FXSs%2FKSkqKSk%2FKC5qc29uKT9bXFwvI1xcP10%2FJCIsIm9yaWdpbmFsU291cmNlIjoiL2FwaS91cGxvYWQvOnBhdGgqIn0seyJyZWdleHAiOiJeKD86XFwvKF9uZXh0XFwvZGF0YVxcL1teL117MSx9KSk%2FXFwvYXBpXFwvc2l0ZS1jb250ZW50KD86XFwvKCg%2FOlteXFwvI1xcP10rPykoPzpcXC8oPzpbXlxcLyNcXD9dKz8pKSopKT8oLmpzb24pP1tcXC8jXFw%2FXT8kIiwib3JpZ2luYWxTb3VyY2UiOiIvYXBpL3NpdGUtY29udGVudC86cGF0aCoifV19!
 
 
 // Import the userland code.
@@ -4910,7 +4911,7 @@ function wrapRequestHandler(handler) {
 },
 /******/ __webpack_require__ => { // webpackRuntimeModules
 /******/ var __webpack_exec__ = (moduleId) => (__webpack_require__(__webpack_require__.s = moduleId))
-/******/ var __webpack_exports__ = (__webpack_exec__(792));
+/******/ var __webpack_exports__ = (__webpack_exec__(230));
 /******/ (_ENTRIES = typeof _ENTRIES === "undefined" ? {} : _ENTRIES).middleware_middleware = __webpack_exports__;
 /******/ }
 ]);

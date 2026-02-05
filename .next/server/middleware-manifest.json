@@ -23,6 +23,10 @@
         {
           "regexp": "^(?:\\/(_next\\/data\\/[^/]{1,}))?\\/api\\/upload(?:\\/((?:[^\\/#\\?]+?)(?:\\/(?:[^\\/#\\?]+?))*))?(.json)?[\\/#\\?]?$",
           "originalSource": "/api/upload/:path*"
+        },
+        {
+          "regexp": "^(?:\\/(_next\\/data\\/[^/]{1,}))?\\/api\\/site-content(?:\\/((?:[^\\/#\\?]+?)(?:\\/(?:[^\\/#\\?]+?))*))?(.json)?[\\/#\\?]?$",
+          "originalSource": "/api/site-content/:path*"
         }
       ],
       "wasm": [],

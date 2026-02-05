@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { defaultHomePageContent, type HomePageContent } from '../../../lib/site-content';
 
 type BlogPost = {
   id: number;
@@ -23,7 +24,7 @@ type Client = {
 };
 
 export default function AdminBlog() {
-  const [activeTab, setActiveTab] = useState<'blog' | 'clients'>('blog');
+  const [activeTab, setActiveTab] = useState<'blog' | 'clients' | 'home'>('blog');
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -41,13 +42,81 @@ export default function AdminBlog() {
   const [clientPreviewImage, setClientPreviewImage] = useState('');
   const [isUploadingClient, setIsUploadingClient] = useState(false);
   const clientFileInputRef = useRef<HTMLInputElement>(null);
+
+  // Home page content states
+  const [homeContent, setHomeContent] = useState<HomePageContent>(defaultHomePageContent);
+  const [homeContentLoading, setHomeContentLoading] = useState(true);
+  const [homeContentSaving, setHomeContentSaving] = useState(false);
+  const [homeContentSaved, setHomeContentSaved] = useState(false);
   
   const router = useRouter();
 
   useEffect(() => {
     fetchPosts();
     fetchClients();
+    fetchHomeContent();
   }, []);
+
+  const fetchHomeContent = async () => {
+    try {
+      setHomeContentLoading(true);
+      const response = await fetch('/api/site-content/home');
+      if (!response.ok) return;
+      const data = (await response.json()) as HomePageContent;
+      if (data && typeof data === 'object') {
+        setHomeContent({ ...defaultHomePageContent, ...data });
+      }
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setHomeContentLoading(false);
+    }
+  };
+
+  const saveHomeContent = async () => {
+    try {
+      setHomeContentSaving(true);
+      setHomeContentSaved(false);
+      setError('');
+
+      const response = await fetch('/api/site-content/home', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(homeContent),
+      });
+
+      if (response.status === 401) {
+        router.push('/admin/login');
+        return;
+      }
+
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data?.error || 'Не удалось сохранить контент');
+      }
+
+      setHomeContentSaved(true);
+      setTimeout(() => setHomeContentSaved(false), 2000);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Не удалось сохранить контент');
+    } finally {
+      setHomeContentSaving(false);
+    }
+  };
+
+  const updateReason = (index: number, patch: Partial<HomePageContent['reasons'][number]>) => {
+    setHomeContent((prev) => {
+      const reasons = prev.reasons.map((r, i) => (i === index ? { ...r, ...patch } : r));
+      return { ...prev, reasons };
+    });
+  };
+
+  const updateOffer = (index: number, patch: Partial<HomePageContent['offers'][number]>) => {
+    setHomeContent((prev) => {
+      const offers = prev.offers.map((o, i) => (i === index ? { ...o, ...patch } : o));
+      return { ...prev, offers };
+    });
+  };
 
   const fetchPosts = async () => {
     try {
@@ -366,6 +435,16 @@ export default function AdminBlog() {
           >
             Управление клиентами
           </button>
+          <button
+            onClick={() => setActiveTab('home')}
+            className={`px-6 py-3 rounded-full font-semibold transition-all duration-300 ${
+              activeTab === 'home'
+                ? 'bg-gradient-pink text-white shadow-lg'
+                : 'bg-white/10 text-white hover:bg-white/20'
+            }`}
+          >
+            Главная страница
+          </button>
         </div>
         
         {error && (
@@ -591,6 +670,252 @@ export default function AdminBlog() {
               </div>
             )}
           </>
+        )}
+
+        {/* Home Page Content Tab */}
+        {activeTab === 'home' && (
+          <div className="bg-white/10 p-8 rounded-xl shadow-glass max-w-4xl mx-auto">
+            <div className="flex items-center justify-between gap-4 mb-6">
+              <h2 className="text-2xl font-bold text-white font-display">Контент главной страницы</h2>
+              <div className="flex gap-3">
+                <button
+                  type="button"
+                  onClick={() => setHomeContent(defaultHomePageContent)}
+                  className="bg-gray-500 text-white px-5 py-2 rounded-full font-semibold"
+                >
+                  Сбросить
+                </button>
+                <button
+                  type="button"
+                  onClick={saveHomeContent}
+                  disabled={homeContentLoading || homeContentSaving}
+                  className="bg-gradient-pink text-white px-6 py-2 rounded-full font-semibold shadow-lg hover:shadow-glow transition-all duration-300 disabled:opacity-50"
+                >
+                  {homeContentSaving ? 'Сохранение...' : 'Сохранить'}
+                </button>
+              </div>
+            </div>
+
+            {homeContentSaved && (
+              <div className="bg-green-500/20 border border-green-500/40 text-white p-4 rounded-lg mb-6">
+                Сохранено
+              </div>
+            )}
+
+            {homeContentLoading ? (
+              <div className="text-white">Загрузка контента...</div>
+            ) : (
+              <div className="space-y-10">
+                <section className="space-y-4">
+                  <h3 className="text-xl font-semibold text-white">Hero</h3>
+                  <div>
+                    <label className="block text-white mb-2">Заголовок</label>
+                    <input
+                      value={homeContent.heroTitle}
+                      onChange={(e) => setHomeContent({ ...homeContent, heroTitle: e.target.value })}
+                      className="w-full p-3 rounded border border-white/20 bg-white/5 text-white focus:outline-none"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-white mb-2">Текст кнопки</label>
+                    <input
+                      value={homeContent.heroCtaText}
+                      onChange={(e) => setHomeContent({ ...homeContent, heroCtaText: e.target.value })}
+                      className="w-full p-3 rounded border border-white/20 bg-white/5 text-white focus:outline-none"
+                    />
+                  </div>
+                </section>
+
+                <section className="space-y-4">
+                  <h3 className="text-xl font-semibold text-white">About</h3>
+                  <div>
+                    <label className="block text-white mb-2">Заголовок</label>
+                    <input
+                      value={homeContent.aboutTitle}
+                      onChange={(e) => setHomeContent({ ...homeContent, aboutTitle: e.target.value })}
+                      className="w-full p-3 rounded border border-white/20 bg-white/5 text-white focus:outline-none"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-white mb-2">Текст</label>
+                    <textarea
+                      value={homeContent.aboutBody}
+                      onChange={(e) => setHomeContent({ ...homeContent, aboutBody: e.target.value })}
+                      className="w-full p-3 rounded border border-white/20 bg-white/5 text-white h-28 focus:outline-none"
+                    />
+                  </div>
+                </section>
+
+                <section className="space-y-4">
+                  <div className="flex items-center justify-between gap-4">
+                    <h3 className="text-xl font-semibold text-white">Reasons</h3>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setHomeContent((prev) => ({
+                          ...prev,
+                          reasons: [...prev.reasons, { title: 'New reason', description: 'Description', icon: '✨' }]
+                        }))
+                      }
+                      className="bg-white/10 text-white px-4 py-2 rounded-full font-semibold hover:bg-white/20"
+                    >
+                      + Добавить
+                    </button>
+                  </div>
+                  <div>
+                    <label className="block text-white mb-2">Заголовок секции</label>
+                    <input
+                      value={homeContent.reasonsTitle}
+                      onChange={(e) => setHomeContent({ ...homeContent, reasonsTitle: e.target.value })}
+                      className="w-full p-3 rounded border border-white/20 bg-white/5 text-white focus:outline-none"
+                    />
+                  </div>
+
+                  <div className="space-y-6">
+                    {homeContent.reasons.map((reason, index) => (
+                      <div key={index} className="border border-white/10 rounded-xl p-4 bg-white/5">
+                        <div className="flex items-center justify-between mb-4">
+                          <div className="text-white font-semibold">Причина {index + 1}</div>
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setHomeContent((prev) => ({
+                                ...prev,
+                                reasons: prev.reasons.filter((_, i) => i !== index)
+                              }))
+                            }
+                            className="bg-red-500/80 text-white px-4 py-1 rounded-full font-semibold"
+                          >
+                            Удалить
+                          </button>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                          <div>
+                            <label className="block text-white mb-2">Иконка</label>
+                            <input
+                              value={reason.icon}
+                              onChange={(e) => updateReason(index, { icon: e.target.value })}
+                              className="w-full p-3 rounded border border-white/20 bg-white/5 text-white focus:outline-none"
+                            />
+                          </div>
+                          <div className="md:col-span-2">
+                            <label className="block text-white mb-2">Заголовок</label>
+                            <input
+                              value={reason.title}
+                              onChange={(e) => updateReason(index, { title: e.target.value })}
+                              className="w-full p-3 rounded border border-white/20 bg-white/5 text-white focus:outline-none"
+                            />
+                          </div>
+                        </div>
+                        <div className="mt-4">
+                          <label className="block text-white mb-2">Описание</label>
+                          <textarea
+                            value={reason.description}
+                            onChange={(e) => updateReason(index, { description: e.target.value })}
+                            className="w-full p-3 rounded border border-white/20 bg-white/5 text-white h-24 focus:outline-none"
+                          />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </section>
+
+                <section className="space-y-4">
+                  <div className="flex items-center justify-between gap-4">
+                    <h3 className="text-xl font-semibold text-white">Offers</h3>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setHomeContent((prev) => ({
+                          ...prev,
+                          offers: [...prev.offers, { title: 'New offer', description: 'Description', icon: '✨' }]
+                        }))
+                      }
+                      className="bg-white/10 text-white px-4 py-2 rounded-full font-semibold hover:bg-white/20"
+                    >
+                      + Добавить
+                    </button>
+                  </div>
+                  <div>
+                    <label className="block text-white mb-2">Заголовок секции</label>
+                    <input
+                      value={homeContent.offersTitle}
+                      onChange={(e) => setHomeContent({ ...homeContent, offersTitle: e.target.value })}
+                      className="w-full p-3 rounded border border-white/20 bg-white/5 text-white focus:outline-none"
+                    />
+                  </div>
+
+                  <div className="space-y-6">
+                    {homeContent.offers.map((offer, index) => (
+                      <div key={index} className="border border-white/10 rounded-xl p-4 bg-white/5">
+                        <div className="flex items-center justify-between mb-4">
+                          <div className="text-white font-semibold">Оффер {index + 1}</div>
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setHomeContent((prev) => ({
+                                ...prev,
+                                offers: prev.offers.filter((_, i) => i !== index)
+                              }))
+                            }
+                            className="bg-red-500/80 text-white px-4 py-1 rounded-full font-semibold"
+                          >
+                            Удалить
+                          </button>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                          <div>
+                            <label className="block text-white mb-2">Иконка</label>
+                            <input
+                              value={offer.icon}
+                              onChange={(e) => updateOffer(index, { icon: e.target.value })}
+                              className="w-full p-3 rounded border border-white/20 bg-white/5 text-white focus:outline-none"
+                            />
+                          </div>
+                          <div className="md:col-span-2">
+                            <label className="block text-white mb-2">Заголовок</label>
+                            <input
+                              value={offer.title}
+                              onChange={(e) => updateOffer(index, { title: e.target.value })}
+                              className="w-full p-3 rounded border border-white/20 bg-white/5 text-white focus:outline-none"
+                            />
+                          </div>
+                        </div>
+                        <div className="mt-4">
+                          <label className="block text-white mb-2">Описание</label>
+                          <textarea
+                            value={offer.description}
+                            onChange={(e) => updateOffer(index, { description: e.target.value })}
+                            className="w-full p-3 rounded border border-white/20 bg-white/5 text-white h-24 focus:outline-none"
+                          />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </section>
+
+                <section className="space-y-4">
+                  <h3 className="text-xl font-semibold text-white">Other headings</h3>
+                  <div>
+                    <label className="block text-white mb-2">Заголовок “Clients”</label>
+                    <input
+                      value={homeContent.clientsTitle}
+                      onChange={(e) => setHomeContent({ ...homeContent, clientsTitle: e.target.value })}
+                      className="w-full p-3 rounded border border-white/20 bg-white/5 text-white focus:outline-none"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-white mb-2">Заголовок “Contact”</label>
+                    <input
+                      value={homeContent.contactTitle}
+                      onChange={(e) => setHomeContent({ ...homeContent, contactTitle: e.target.value })}
+                      className="w-full p-3 rounded border border-white/20 bg-white/5 text-white focus:outline-none"
+                    />
+                  </div>
+                </section>
+              </div>
+            )}
+          </div>
         )}
       </div>
     </main>

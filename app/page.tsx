@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 import Header from './components/Header';
 import TeamStructure from './components/TeamStructure';
 import Link from 'next/link';
+import { defaultHomePageContent, type HomePageContent } from '../lib/site-content';
 
 type Client = {
   id: number;
@@ -16,6 +17,7 @@ type Client = {
 };
 
 export default function Home() {
+  const [content, setContent] = useState<HomePageContent>(defaultHomePageContent);
   const [formData, setFormData] = useState({
     companyName: '',
     email: '',
@@ -29,8 +31,22 @@ export default function Home() {
   const [clientsLoading, setClientsLoading] = useState(true);
 
   useEffect(() => {
+    fetchHomePageContent();
     fetchClients();
   }, []);
+
+  const fetchHomePageContent = async () => {
+    try {
+      const response = await fetch('/api/site-content/home');
+      if (!response.ok) return;
+      const data = (await response.json()) as HomePageContent;
+      if (data && typeof data === 'object') {
+        setContent({ ...defaultHomePageContent, ...data });
+      }
+    } catch {
+      // Keep defaults
+    }
+  };
 
   const fetchClients = async () => {
     try {
@@ -111,7 +127,7 @@ export default function Home() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2, duration: 0.8 }}
               >
-                UNLOCKING THE POWER OF TALENT, WORLDWIDE.
+                {content.heroTitle}
               </motion.h1>
               
               <motion.div
@@ -123,7 +139,7 @@ export default function Home() {
                   href="#contact" 
                   className="inline-block bg-gradient-pink text-white px-16 py-6 rounded-full font-semibold text-2xl md:text-3xl hover:shadow-glow transition-all duration-300"
                 >
-                  Let's Get Hiring
+                  {content.heroCtaText}
                 </Link>
               </motion.div>
             </div>
@@ -135,9 +151,9 @@ export default function Home() {
             transition={{ duration: 0.8 }}
             className="text-center max-w-3xl mx-auto mt-24 mb-20"
           >
-            <h2 id="about" className="text-4xl font-bold text-white mb-6 font-display">Who we are</h2>
+            <h2 id="about" className="text-4xl font-bold text-white mb-6 font-display">{content.aboutTitle}</h2>
             <div className="text-lg text-gray-300 leading-relaxed">
-              We are partners committed to your success, dedicated to finding the ideal match for your team. We understand the importance of time and the impact a wrong hire can have on your business. That&apos;s why we offer personalized recruitment services that prioritize efficiency and effectiveness. At MatchMakers we try to create the perfect synergy between your company and exceptional talent.
+              {content.aboutBody}
             </div>
           </motion.section>
 
@@ -147,14 +163,9 @@ export default function Home() {
             transition={{ duration: 0.8, delay: 0.2 }}
             className="mb-32 w-full max-w-6xl mx-auto"
           >
-            <h2 id="services" className="text-4xl font-bold text-white mb-12 text-center font-display">Main reasons to choose MatchMakers</h2>
+            <h2 id="services" className="text-4xl font-bold text-white mb-12 text-center font-display">{content.reasonsTitle}</h2>
             <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-              {[
-                { title: "Quality", description: "We understand the importance of time and the impact a wrong hire can have on your business.", icon: "✅" },
-                { title: "Personalization", description: "We offer personalized recruitment services that prioritize efficiency and effectiveness.", icon: "🧩" },
-                { title: "Experience", description: "Our team members brings over five years of experience in hiring top-tier professionals.", icon: "🏆" },
-                { title: "Transparency", description: "We are committed to transparency at every stage, providing full visibility into our processes.", icon: "🔎" }
-              ].map((reason, index) => (
+              {content.reasons.map((reason, index) => (
                 <motion.div
                   key={index}
                   className="bg-white/5 backdrop-blur-glass p-8 rounded-xl border border-white/10 shadow-glass text-center"
@@ -174,28 +185,9 @@ export default function Home() {
             transition={{ duration: 0.8 }}
             className="mb-32 w-full max-w-6xl mx-auto"
           >
-            <h2 className="text-4xl font-bold text-white mb-12 text-center font-display">What we can offer</h2>
+            <h2 className="text-4xl font-bold text-white mb-12 text-center font-display">{content.offersTitle}</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {[
-                {
-                  title: "Executive search",
-                  description:
-                    "Executive search and sourcing of top talent for your company, startup, or new projects.",
-                  icon: "🎯"
-                },
-                {
-                  title: "Team building",
-                  description:
-                    "Building high-impact teams where employees truly complement each other and work towards your company's goals.",
-                  icon: "🤝"
-                },
-                {
-                  title: "End-to-end guidance",
-                  description:
-                    "Guiding you through every step of the recruitment process with care, making it seamless, transparent, and effective.",
-                  icon: "🧭"
-                }
-              ].map((offer, index) => (
+              {content.offers.map((offer, index) => (
                 <motion.div
                   key={index}
                   className="bg-white/5 backdrop-blur-glass p-8 rounded-xl border border-white/10 shadow-glass text-center"
@@ -215,7 +207,7 @@ export default function Home() {
             transition={{ duration: 0.8 }}
             className="mb-32"
           >
-            <h2 id="clients" className="text-4xl font-bold text-white mb-12 text-center font-display">Our Clients</h2>
+            <h2 id="clients" className="text-4xl font-bold text-white mb-12 text-center font-display">{content.clientsTitle}</h2>
             {clientsLoading ? (
               <div className="text-center text-white">Loading clients...</div>
             ) : clients.length > 0 ? (
@@ -260,7 +252,7 @@ export default function Home() {
             transition={{ duration: 0.8 }}
             className="mb-32 w-full max-w-2xl mx-auto"
           >
-            <h2 id="contact" className="text-4xl font-bold text-white mb-12 text-center font-display">Let&apos;s Get Hiring</h2>
+            <h2 id="contact" className="text-4xl font-bold text-white mb-12 text-center font-display">{content.contactTitle}</h2>
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
                 <label htmlFor="companyName" className="block text-white mb-2">Company Name</label>

@@ -9,7 +9,9 @@ export async function middleware(request: NextRequest) {
   const isAdminRoute = pathname.startsWith('/admin') && !pathname.startsWith('/admin/login');
   const isProtectedAPIRoute = (
     pathname.startsWith('/api/blog') && request.method !== 'GET'
-  ) || pathname.startsWith('/api/upload');
+  ) || pathname.startsWith('/api/upload') || (
+    pathname.startsWith('/api/site-content') && request.method !== 'GET'
+  );
   
   if (isAdminRoute || isProtectedAPIRoute) {
     const adminSession = request.cookies.get('admin_session')?.value;
@@ -44,6 +46,7 @@ export const config = {
   matcher: [
     '/admin/:path*',
     '/api/blog/:path*',
-    '/api/upload/:path*'
+    '/api/upload/:path*',
+    '/api/site-content/:path*'
   ],
 }; 
