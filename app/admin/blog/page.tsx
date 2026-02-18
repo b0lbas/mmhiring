@@ -33,6 +33,7 @@ export default function AdminBlog() {
   const [previewImage, setPreviewImage] = useState('');
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const contentTextareaRef = useRef<HTMLTextAreaElement>(null);
   
   // Client states
   const [clients, setClients] = useState<Client[]>([]);
@@ -223,6 +224,27 @@ export default function AdminBlog() {
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
     setCurrentPost({ ...currentPost, [e.target.name]: e.target.value });
+  }
+
+  function wrapSelectedText(tag: string) {
+    const textarea = contentTextareaRef.current;
+    if (!textarea) return;
+    
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const text = textarea.value;
+    const selectedText = text.substring(start, end);
+    
+    const wrappedText = `<${tag}>${selectedText}</${tag}>`;
+    const newText = text.substring(0, start) + wrappedText + text.substring(end);
+    
+    setCurrentPost({ ...currentPost, content: newText });
+    
+    // Restore cursor position after state update
+    setTimeout(() => {
+      textarea.focus();
+      textarea.setSelectionRange(start + tag.length + 2, start + tag.length + 2 + selectedText.length);
+    }, 0);
   }
 
   const handleEdit = (post: BlogPost) => {
@@ -474,7 +496,34 @@ export default function AdminBlog() {
             onChange={handleChange}
             className="w-full mb-4 p-3 rounded border border-white/20 bg-white/5 text-white h-20 focus:outline-none"
           />
+          <div className="mb-2 flex gap-2">
+            <button
+              type="button"
+              onClick={() => wrapSelectedText('b')}
+              className="px-3 py-1 bg-white/20 text-white rounded hover:bg-white/30 font-bold"
+              title="Жирный"
+            >
+              B
+            </button>
+            <button
+              type="button"
+              onClick={() => wrapSelectedText('i')}
+              className="px-3 py-1 bg-white/20 text-white rounded hover:bg-white/30 italic"
+              title="Наклонный"
+            >
+              I
+            </button>
+            <button
+              type="button"
+              onClick={() => wrapSelectedText('u')}
+              className="px-3 py-1 bg-white/20 text-white rounded hover:bg-white/30 underline"
+              title="Подчёркнутый"
+            >
+              U
+            </button>
+          </div>
           <textarea
+            ref={contentTextareaRef}
             name="content"
             placeholder="Содержание"
             value={currentPost.content}

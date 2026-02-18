@@ -93,7 +93,11 @@ export default function BlogPostPage({ params }: { params: { id: string } }) {
             </div>
           )}
           <p className="text-lg text-gray-300 mb-8 text-center">{post.preview}</p>
-          <div className="prose prose-invert max-w-none text-white" style={{whiteSpace: 'pre-line'}}>{post.content}</div>
+          <div 
+            className="prose prose-invert max-w-none text-white text-lg leading-relaxed" 
+            style={{whiteSpace: 'pre-line'}}
+            dangerouslySetInnerHTML={{__html: post.content}}
+          />
           
           <div className="mt-12 text-center">
             <Link href="/blog" className="text-primary-pink hover:underline">

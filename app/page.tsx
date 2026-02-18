@@ -66,7 +66,7 @@ export default function Home() {
 
   function validate() {
     const newErrors: { companyName?: string; email?: string; request?: string } = {};
-    if (!formData.companyName.trim()) newErrors.companyName = 'Company name is required.';
+    if (!formData.companyName.trim()) newErrors.companyName = 'Name is required.';
     if (!formData.email.trim()) newErrors.email = 'Email is required.';
     else if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(formData.email)) newErrors.email = 'Invalid email address.';
     if (!formData.request.trim()) newErrors.request = 'Request is required.';
@@ -255,14 +255,14 @@ export default function Home() {
             <h2 id="contact" className="text-4xl font-bold text-white mb-12 text-center font-display">{content.contactTitle}</h2>
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
-                <label htmlFor="companyName" className="block text-white mb-2">Company Name</label>
+                <label htmlFor="companyName" className="block text-white mb-2">Name</label>
                 <input
                   id="companyName"
                   type="text"
                   className="w-full bg-white/5 backdrop-blur-glass p-4 rounded-xl border border-white/10 text-white focus:outline-none focus:ring-2 focus:ring-primary-pink"
                   value={formData.companyName}
                   onChange={(e) => setFormData({ ...formData, companyName: e.target.value })}
-                  aria-label="Company Name"
+                  aria-label="Name"
                   aria-invalid={!!errors.companyName}
                   required
                 />
